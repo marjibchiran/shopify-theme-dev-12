@@ -1,0 +1,227 @@
+<div class="container">
+  <div class="custom-contact-form">
+    {% if section.settings.heading %}
+      <h2>{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% form 'contact' %}
+      {%- if form.posted_successfully? -%}
+        <p>Your Message Has Been Sent</p>
+      {%- elsif form.errors -%}
+        <p class="error-message">{{ form.errors | default_errors }}</p>
+      {%- endif -%}
+
+      {% for block in section.blocks %}
+        {% if block.type == 'input' and block.settings.type == 'textarea' %}
+          <div>
+            <label for="{{ block.settings.id }}">{{ block.settings.label }}</label>
+            <textarea
+              required
+              name="contact[{{ block.settings.name }}]"
+              placeholder="{{ block.settings.placeholder }}"
+              id="{{ block.settings.id }}"
+            >{{ form[block.settings.name] }}</textarea>
+          </div>
+        {% elsif block.type == 'input' and block.settings.type == 'checkbox' %}
+          <div class="checkbox-group">
+            <input
+              required
+              type="checkbox"
+              name="contact[{{ block.settings.name }}]"
+              id="{{ block.settings.id }}"
+              {% if form[block.settings.name] %}
+                checked
+              {% endif %}
+            >
+            <label for="{{ block.settings.id }}">{{ block.settings.label }}</label>
+          </div>
+        {% elsif block.type == 'input' %}
+          <div>
+            <label for="{{ block.settings.id }}">{{ block.settings.label }}</label>
+            <input
+              required
+              type="{{ block.settings.type }}"
+              name="contact[{{ block.settings.name }}]"
+              placeholder="{{ block.settings.placeholder }}"
+              id="{{ block.settings.id }}"
+              value="{% if form[block.settings.name] %}{{ form[block.settings.name] }}{% endif %}"
+            >
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div>
+        <button type="submit">{{ section.settings.button }}</button>
+      </div>
+    {% endform %}
+  </div>
+</div>
+
+<style>
+  .container {
+    margin: 70px 0;
+  }
+  .custom-contact-form {
+    background-color: #f9f9f9;
+    padding: 50px 60px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 1200px;
+    height: auto;
+    margin: auto;
+  }
+
+  .custom-contact-form h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+    font-weight: 700;
+  }
+
+  .custom-contact-form label {
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+  }
+
+  .custom-contact-form input[type='text'],
+  .custom-contact-form input[type='email'],
+  .custom-contact-form textarea,
+  .custom-contact-form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .custom-contact-form input[type='text']:focus,
+  .custom-contact-form input[type='email']:focus,
+  .custom-contact-form textarea:focus,
+  .custom-contact-form select:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+  }
+
+  .custom-contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .custom-contact-form input[type='checkbox'] {
+    width: auto;
+    margin-right: 10px;
+  }
+
+  .custom-contact-form .checkbox-group {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+
+  .custom-contact-form button[type='submit'] {
+    background-color: #000;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    padding: 10px 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .custom-contact-form button[type='submit']:hover {
+    background-color: #3a05ca;
+  }
+
+  .custom-contact-form p {
+    font-size: 20px;
+    color: #28a745;
+    text-align: center;
+  }
+
+  .custom-contact-form .error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .custom-contact-form {
+      padding: 15px;
+    }
+
+    .custom-contact-form h2 {
+      font-size: 30px;
+    }
+
+    .custom-contact-form button[type='submit'] {
+      padding: 12px 20px;
+      font-size: 20px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Contact Form",
+  "settings": [
+    {
+      "type": "text",
+      "label": "Heading Text",
+      "id": "heading"
+    },
+    {
+      "type": "text",
+      "label": "Button Text",
+      "id": "button",
+      "default": "Submit"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "input",
+      "type": "input",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "id",
+          "label": "Id"
+        },
+        {
+          "type": "text",
+          "id": "type",
+          "label": "Input Type"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Contact Form"
+    }
+  ]
+}
+{% endschema %}
